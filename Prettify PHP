@@ -49,6 +49,7 @@ $returnCode = 0;
 exec('/usr/local/bin/php-cs-fixer fix --quiet ' . $tempFile, $output, $returnCode);
 if ($returnCode) {
     // Error occurred
+    unlink($tempFile);
     exit($returnCode);
 }
 
