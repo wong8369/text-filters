@@ -46,6 +46,8 @@ unset($in);
 
 $output = [];
 $returnCode = 0;
+
+// php-cs-fixer required (brew install php-cs-fixer)
 exec('/usr/local/bin/php-cs-fixer fix --quiet ' . $tempFile, $output, $returnCode);
 if ($returnCode) {
     // Error occurred
