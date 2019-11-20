@@ -1,6 +1,7 @@
 #!/usr/bin/php
 <?php
 /*
+ * php-cs-fixer required (brew install php-cs-fixer)
  * IN: PHP Code
  * OUT: PHP Code (reformatted)
  */
