@@ -14,7 +14,7 @@ $endingLength = mb_strlen(PHP_EOL);
 
 $in = '';
 while (!feof(STDIN)) {
-    $res = fgets(STDIN, 1024);
+    $res = fgets(STDIN);
     if (false === $res) {
         if (!feof(STDIN)) {
             fwrite(STDERR, "error reading from stdin");
