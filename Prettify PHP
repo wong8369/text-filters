@@ -1,0 +1,70 @@
+#!/usr/bin/php
+<?php
+/*
+ * IN: PHP Code
+ * OUT: PHP Code (reformatted)
+ */
+
+$phpTag = '<?php';
+$checkTag = true;
+$appendTag = false;
+$temDir = is_dir('/tmp/') ? '/tmp/' : sys_get_temp_dir();
+$tempFile = tempnam($temDir, 'php_cs_fix_');
+$endingLength = mb_strlen(PHP_EOL);
+
+$in = '';
+while (!feof(STDIN)) {
+    $res = fgets(STDIN, 1024);
+    if (false === $res) {
+        if (!feof(STDIN)) {
+            fwrite(STDERR, "error reading from stdin");
+            exit(3);
+        } else {
+            break;
+        }
+    }
+    if ($checkTag) {
+        $trimRes = trim($res);
+        if ($trimRes !== '') {
+            $checkTag = false;
+        }
+        if ($phpTag != mb_strtolower(mb_substr($trimRes, 0, mb_strlen($phpTag)))) {
+            $appendTag = true;
+        }
+    }
+    $in .= $res;
+}
+
+if ($appendTag) {
+    $in = $phpTag . "\n" . $in;
+}
+
+file_put_contents($tempFile, $in);
+
+$oldEnding = mb_substr($in, -$endingLength, $endingLength);
+unset($in);
+
+$output = [];
+$returnCode = 0;
+exec('/usr/local/bin/php-cs-fixer fix --quiet ' . $tempFile, $output, $returnCode);
+if ($returnCode) {
+    // Error occurred
+    exit($returnCode);
+}
+
+$result = file_get_contents($tempFile);
+unlink($tempFile);
+
+if ($appendTag) {
+    $result = mb_substr($result, mb_strlen($phpTag) + 1);
+}
+
+$newEnding = mb_substr($result, -$endingLength, $endingLength);
+if ($newEnding === PHP_EOL) {
+    $oldLastChar = mb_substr($oldEnding, -1, 1);
+    if ($oldEnding !== PHP_EOL && $oldEnding !== "\r\n" && $oldLastChar !== "\n" && $oldLastChar !== "\r") {
+        $result = mb_substr($result, 0, mb_strlen($result) - $endingLength);
+    }
+}
+
+echo $result;
