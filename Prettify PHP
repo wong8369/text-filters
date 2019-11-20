@@ -64,7 +64,7 @@ if ($appendTag) {
 }
 
 $newEnding = mb_substr($result, -$endingLength, $endingLength);
-if ($newEnding === PHP_EOL) {
+if ($appendTag && $newEnding === PHP_EOL) {
     $oldLastChar = mb_substr($oldEnding, -1, 1);
     if ($oldEnding !== PHP_EOL && $oldEnding !== "\r\n" && $oldLastChar !== "\n" && $oldLastChar !== "\r") {
         $result = mb_substr($result, 0, mb_strlen($result) - $endingLength);
